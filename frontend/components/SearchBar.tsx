@@ -17,7 +17,6 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (
@@ -89,7 +88,7 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
     <div ref={wrapperRef} className="relative w-full max-w-2xl">
       <div className="relative">
         <svg
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)]"
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -97,7 +96,7 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2}
+            strokeWidth={2.5}
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
         </svg>
@@ -109,30 +108,30 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
           onKeyDown={handleKeyDown}
           onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
           placeholder="Enter an address, neighborhood, city, or ZIP code"
-          className="w-full pl-12 pr-4 py-4 text-lg rounded-xl border-2 border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:border-[var(--zillow-blue)] transition-colors"
+          className="w-full pl-12 pr-4 py-4 text-lg font-bold rounded-[5px] border-2 border-border bg-white placeholder-black/40 focus:outline-none focus:ring-2 focus:ring-main nb-shadow transition-shadow"
         />
         {isLoading && (
           <div className="absolute right-4 top-1/2 -translate-y-1/2">
-            <div className="w-5 h-5 border-2 border-[var(--zillow-blue)] border-t-transparent rounded-full animate-spin" />
+            <div className="w-5 h-5 border-3 border-main border-t-transparent rounded-full animate-spin" />
           </div>
         )}
       </div>
 
       {showDropdown && (
-        <ul className="absolute z-50 w-full mt-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-xl overflow-hidden max-h-80 overflow-y-auto">
+        <ul className="absolute z-50 w-full mt-2 bg-white border-2 border-border rounded-[5px] nb-shadow overflow-hidden max-h-80 overflow-y-auto">
           {suggestions.map((s, i) => (
             <li
               key={i}
-              className={`px-4 py-3 cursor-pointer transition-colors flex items-center gap-3 ${
+              className={`px-4 py-3 cursor-pointer font-semibold flex items-center gap-3 border-b border-border last:border-b-0 transition-colors ${
                 i === activeIndex
-                  ? "bg-[var(--bg-tertiary)]"
-                  : "hover:bg-[var(--bg-secondary)]"
+                  ? "bg-main/30"
+                  : "hover:bg-main/15"
               }`}
               onMouseEnter={() => setActiveIndex(i)}
               onClick={() => handleSelect(s)}
             >
               <svg
-                className="w-4 h-4 text-[var(--text-secondary)] shrink-0"
+                className="w-4 h-4 shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -140,23 +139,23 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
+                  strokeWidth={2.5}
                   d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
                 />
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
+                  strokeWidth={2.5}
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
               <div className="flex-1 min-w-0">
-                <div className="text-[var(--text-primary)] truncate">
+                <div className="truncate">
                   {s.text}
                 </div>
               </div>
               {s.type && s.type !== "unknown" && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--bg-tertiary)] text-[var(--text-secondary)] shrink-0">
+                <span className="text-xs px-2 py-0.5 rounded-[3px] bg-main/20 border border-border font-bold shrink-0">
                   {s.type}
                 </span>
               )}

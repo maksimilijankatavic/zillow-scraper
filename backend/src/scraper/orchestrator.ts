@@ -65,6 +65,9 @@ async function orchestrate(job: ScrapeJob, searchUrl: string): Promise<void> {
   const { schema, logger, abortController } = job;
   let globalCount = 0;
 
+  // Track scraped URLs across all pages to avoid duplicates
+  const scrapedUrls = new Set<string>();
+
   let mainSession: SteelSession | null = null;
 
   try {
@@ -96,9 +99,27 @@ async function orchestrate(job: ScrapeJob, searchUrl: string): Promise<void> {
         break;
       }
 
+      // Filter out URLs we've already scraped (Zillow pages can overlap)
+      const newUrls = listingUrls.filter((url) => {
+        const zpid = url.match(/(\d+)_zpid/)?.[1];
+        const key = zpid || url;
+        return !scrapedUrls.has(key);
+      });
+
+      if (newUrls.length < listingUrls.length) {
+        logger.info(
+          `Filtered ${listingUrls.length - newUrls.length} duplicate listings already scraped.`
+        );
+      }
+
+      if (newUrls.length === 0) {
+        logger.info("All listings on this page were already scraped — no more new results from Zillow.");
+        break;
+      }
+
       // Determine how many to scrape from this page (respect global limit)
       const remaining = MAX_LISTINGS - globalCount;
-      const toScrape = listingUrls.slice(0, remaining);
+      const toScrape = newUrls.slice(0, remaining);
 
       logger.info(
         `Scraping ${toScrape.length} listings (${globalCount}/${MAX_LISTINGS} done so far)...`
@@ -114,6 +135,10 @@ async function orchestrate(job: ScrapeJob, searchUrl: string): Promise<void> {
       );
 
       for (const result of results) {
+        // Mark URL as scraped regardless of success to avoid retrying
+        const zpid = result.url.match(/(\d+)_zpid/)?.[1];
+        scrapedUrls.add(zpid || result.url);
+
         if (result.success && result.data) {
           schema.addRow(result.data);
           globalCount++;
