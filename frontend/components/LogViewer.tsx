@@ -18,10 +18,10 @@ interface LogViewerProps {
 }
 
 const LEVEL_STYLES: Record<string, string> = {
-  info: "text-blue-400",
-  warn: "text-yellow-400",
-  error: "text-red-400",
-  success: "text-green-400",
+  info: "text-info font-black",
+  warn: "text-warn font-black",
+  error: "text-error font-black",
+  success: "text-success font-black",
 };
 
 const LEVEL_LABELS: Record<string, string> = {
@@ -67,7 +67,6 @@ export default function LogViewer({ jobId, onDone }: LogViewerProps) {
     return () => eventSource.close();
   }, [jobId, onDone]);
 
-  // Auto-scroll
   useEffect(() => {
     if (autoScrollRef.current && containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
@@ -87,21 +86,19 @@ export default function LogViewer({ jobId, onDone }: LogViewerProps) {
       {/* Progress bar */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-[var(--text-secondary)]">
+          <span className="text-sm font-bold">
             {isDone ? "Scraping complete" : "Scraping in progress..."}
           </span>
-          <span className="text-sm font-mono font-bold text-[var(--zillow-blue)]">
+          <span className="text-sm font-mono font-black text-main-accent">
             {scraped} / {total}
           </span>
         </div>
-        <div className="h-3 bg-[var(--bg-tertiary)] rounded-full overflow-hidden">
+        <div className="h-4 bg-white border-2 border-border rounded-[5px] overflow-hidden nb-shadow-sm">
           <div
-            className="h-full rounded-full transition-all duration-300 ease-out"
+            className="h-full transition-all duration-300 ease-out"
             style={{
               width: `${progress}%`,
-              background: isDone
-                ? "#22c55e"
-                : "var(--zillow-blue)",
+              background: isDone ? "var(--color-success)" : "var(--color-main)",
             }}
           />
         </div>
@@ -111,31 +108,31 @@ export default function LogViewer({ jobId, onDone }: LogViewerProps) {
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="bg-[#0d1117] rounded-xl border border-[var(--border-color)] p-4 font-mono text-sm h-[500px] overflow-y-auto"
+        className="bg-white border-2 border-border rounded-[5px] nb-shadow p-4 font-mono text-sm h-[500px] overflow-y-auto"
       >
         {logs.length === 0 && (
-          <div className="text-[var(--text-secondary)] text-center py-8">
+          <div className="text-center py-8 font-bold opacity-50">
             Waiting for logs...
           </div>
         )}
         {logs.map((entry, i) => {
           const time = new Date(entry.timestamp).toLocaleTimeString();
-          const levelClass = LEVEL_STYLES[entry.level] || "text-gray-400";
+          const levelClass = LEVEL_STYLES[entry.level] || "font-black";
           const label = LEVEL_LABELS[entry.level] || "LOG ";
 
           return (
             <div key={i} className="flex gap-3 py-0.5 leading-relaxed">
-              <span className="text-gray-600 shrink-0">{time}</span>
-              <span className={`${levelClass} shrink-0 font-bold`}>
+              <span className="opacity-40 shrink-0 font-bold">{time}</span>
+              <span className={`${levelClass} shrink-0`}>
                 [{label}]
               </span>
-              <span className="text-gray-300 break-all">{entry.message}</span>
+              <span className="break-all">{entry.message}</span>
             </div>
           );
         })}
         {isDone && (
-          <div className="flex gap-3 py-0.5 leading-relaxed mt-2 border-t border-gray-800 pt-2">
-            <span className="text-green-400 font-bold">
+          <div className="flex gap-3 py-0.5 leading-relaxed mt-2 border-t-2 border-border pt-2">
+            <span className="text-success font-black">
               Scraping finished. {scraped} listings collected.
             </span>
           </div>

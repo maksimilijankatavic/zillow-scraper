@@ -21,7 +21,7 @@ export default function ScrapePage() {
       <div className="w-full max-w-4xl mb-8">
         <button
           onClick={() => router.push("/")}
-          className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex items-center gap-1 mb-4"
+          className="nb-btn nb-btn-secondary text-sm mb-4 py-2 px-3"
         >
           <svg
             className="w-4 h-4"
@@ -32,16 +32,16 @@ export default function ScrapePage() {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
+              strokeWidth={2.5}
               d="M15 19l-7-7 7-7"
             />
           </svg>
           Back to search
         </button>
-        <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+        <h1 className="text-3xl font-black">
           Scraping Job
         </h1>
-        <p className="text-sm text-[var(--text-secondary)] mt-1 font-mono">
+        <p className="text-sm mt-1 font-mono font-bold opacity-50">
           {jobId}
         </p>
       </div>
